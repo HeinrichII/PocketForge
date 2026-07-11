@@ -1,2 +1,18 @@
 # PocketForge
-PocketForge – Offline AI Engineering Workspace Designed and built an offline AI development environment on Android using Termux, Bash, and locally compiled llama.cpp. Developed a modular suite of command-line tools for AI-assisted project management, document summarization, code review, and workflow automation. Optimized LLM inference on 4 GB phone
+
+PocketForge is an offline AI engineering workspace built on a Samsung Galaxy A23 using Termux, llama.cpp, and local GGUF language models.
+
+## Features
+
+- Offline AI assistant
+- AI-powered shell utilities
+- Project dashboard
+- AI script review
+- File summarization
+- Plain-English file explanation
+
+## Current Status
+
+Active development.
+
+See HANDOFF.md for the current project architecture and roadmap.
