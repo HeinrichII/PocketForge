@@ -1,0 +1,31 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+if [ $# -ne 1 ]; then
+    echo "Usage: outline <file>" >&2
+    exit 2
+fi
+
+FILE="$1"
+
+if [ ! -f "$FILE" ]; then
+    echo "outline: file not found: $FILE" >&2
+    exit 1
+fi
+
+if [ ! -s "$FILE" ]; then
+    echo "outline: file is empty: $FILE" >&2
+    exit 1
+fi
+
+awk '
+/^[[:space:]]*(#{1,6}[[:space:]]|[-*][[:space:]])/ {
+    print
+    capture_next = ($0 == "## Safety Rule" || $0 == "## Last Updated")
+    next
+}
+
+capture_next && NF {
+    print
+    capture_next = 0
+}
+' "$FILE"

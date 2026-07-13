@@ -75,6 +75,8 @@ if [ $# -gt 0 ]; then
         -m "$MODEL" \
         -c "$CONTEXT_SIZE" \
         --single-turn \
+        --temp 0  \
+        -n 128 \
         --no-display-prompt \
         -p "$PROMPT"
 elif [ ! -t 0 ]; then
@@ -89,6 +91,8 @@ elif [ ! -t 0 ]; then
         -m "$MODEL" \
         -c "$CONTEXT_SIZE" \
         --single-turn \
+        --temp 0  \
+        -n 128 \
         --no-display-prompt \
         -p "$PROMPT"
 else

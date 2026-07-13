@@ -21,6 +21,7 @@
 - ai-smart delegates to pf-ai smart
 - summarize delegates to pf-ai smart
 - explain delegates to pf-ai smart
+- outline extracts full-file headings and bullet points without AI
 - review performs a Bash syntax check, then delegates excerpt analysis to pf-ai smart
 - Direct prompts use single-turn mode
 - Interactive prompts remain available
@@ -42,6 +43,7 @@
 - review
 - summarize
 - explain
+- outline
 
 ## Completed Milestones
 - Compiled llama.cpp locally
@@ -54,6 +56,8 @@
 - Migrated summarize to pf-ai
 - Migrated explain to pf-ai
 - Migrated review to pf-ai
+- Added deterministic full-file outline command
+- Tested chunked AI summarization and rolled it back due to unreliable paraphrasing
 - Added deterministic Bash syntax checking to review
 - Added single-turn and piped-input support
 - Severed Hugging Face runtime dependency
@@ -64,6 +68,8 @@
 - summarize and explain inspect only short file excerpts
 - review analyzes only the first 20 lines after syntax checking
 - Small models may ignore requested bullet limits or make minor wording errors
+- Chunked AI summaries may alter or invent technical meaning
+- outline provides reliable extractive coverage but does not compress content
 
 ## Next Refactor
 - Add chunked file processing
