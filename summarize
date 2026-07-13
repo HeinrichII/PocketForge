@@ -1,0 +1,28 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+if [ $# -ne 1 ]; then
+    echo "Usage: summarize <file>" >&2
+    exit 2
+fi
+
+FILE="$1"
+
+if [ ! -f "$FILE" ]; then
+    echo "summarize: file not found: $FILE" >&2
+    exit 1
+fi
+
+{
+    cat <<'PROMPT'
+Summarize the text below in no more than 8 short bullet points.
+
+Rules:
+- Preserve exact names, paths, numbers, and model identifiers.
+- Do not invent or reinterpret technical details.
+- Focus on current state, completed work, and next actions.
+- Do not repeat headings unless necessary.
+
+TEXT:
+PROMPT
+    head -n 20 "$FILE"
+} | exec pf-ai smart

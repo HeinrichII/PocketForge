@@ -1,0 +1,98 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+set -u
+
+LLAMA_DIR="$HOME/llama.cpp"
+LLAMA_CLI="$LLAMA_DIR/build/bin/llama-cli"
+
+FAST_MODEL="$HOME/PocketForge/models/Qwen2.5-0.5B-Instruct-Q4_K_M.gguf"
+SMART_MODEL="$HOME/PocketForge/models/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf"
+
+CONTEXT_SIZE=384
+
+usage() {
+    cat <<'HELP'
+Usage:
+  pf-ai fast [prompt]
+  pf-ai smart [prompt]
+
+Examples:
+  pf-ai fast
+  pf-ai fast "Explain what DNS does."
+  pf-ai smart "Review this architecture."
+  printf '%s\n' "Explain TCP" | pf-ai fast
+HELP
+}
+
+if [ ! -x "$LLAMA_CLI" ]; then
+    echo "pf-ai: llama-cli not found or not executable:" >&2
+    echo "  $LLAMA_CLI" >&2
+    exit 1
+fi
+
+if [ $# -lt 1 ]; then
+    usage >&2
+    exit 2
+fi
+
+MODE="$1"
+shift
+
+case "$MODE" in
+    fast)
+        MODEL="$FAST_MODEL"
+        ;;
+    smart)
+        MODEL="$SMART_MODEL"
+        ;;
+    -h|--help|help)
+        usage
+        exit 0
+        ;;
+    *)
+        echo "pf-ai: unknown model mode: $MODE" >&2
+        echo >&2
+        usage >&2
+        exit 2
+        ;;
+esac
+
+if [ ! -f "$MODEL" ]; then
+    echo "pf-ai: local model not found:" >&2
+    echo "  $MODEL" >&2
+    exit 1
+fi
+
+cd "$LLAMA_DIR" || {
+    echo "pf-ai: cannot enter $LLAMA_DIR" >&2
+    exit 1
+}
+
+if [ $# -gt 0 ]; then
+    PROMPT="$*"
+
+    exec "$LLAMA_CLI" \
+        -m "$MODEL" \
+        -c "$CONTEXT_SIZE" \
+        --single-turn \
+        --no-display-prompt \
+        -p "$PROMPT"
+elif [ ! -t 0 ]; then
+    PROMPT="$(cat)"
+
+    if [ -z "$PROMPT" ]; then
+        echo "pf-ai: received empty input" >&2
+        exit 2
+    fi
+
+    exec "$LLAMA_CLI" \
+        -m "$MODEL" \
+        -c "$CONTEXT_SIZE" \
+        --single-turn \
+        --no-display-prompt \
+        -p "$PROMPT"
+else
+    exec "$LLAMA_CLI" \
+        -m "$MODEL" \
+        -c "$CONTEXT_SIZE"
+fi
