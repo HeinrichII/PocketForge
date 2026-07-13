@@ -1,0 +1,29 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+if [ $# -ne 1 ]; then
+    echo "Usage: explain <file>" >&2
+    exit 2
+fi
+
+FILE="$1"
+
+if [ ! -f "$FILE" ]; then
+    echo "explain: file not found: $FILE" >&2
+    exit 1
+fi
+
+{
+    cat <<'PROMPT'
+Explain the text below in 5 short bullet points.
+
+Strict rules:
+- Copy every path, command, name, number, and model identifier character-for-character.
+- Never expand, normalize, shorten, or rewrite paths beginning with ~.
+- Do not infer details that are not written.
+- Explain what the text says and why it matters.
+- Stop after 5 bullet points.
+
+TEXT:
+PROMPT
+    head -n 16 "$FILE"
+} | exec pf-ai smart

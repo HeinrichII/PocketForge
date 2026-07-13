@@ -20,6 +20,8 @@
 - ai delegates to pf-ai fast
 - ai-smart delegates to pf-ai smart
 - summarize delegates to pf-ai smart
+- explain delegates to pf-ai smart
+- review performs a Bash syntax check, then delegates excerpt analysis to pf-ai smart
 - Direct prompts use single-turn mode
 - Interactive prompts remain available
 - Piped input is supported
@@ -47,17 +49,26 @@
 - Built fast and smart launchers
 - Created project dashboard
 - Built note and todo commands
-- Built review, summarize, and explain helpers
 - Created shared pf-ai engine
 - Migrated ai and ai-smart to pf-ai
 - Migrated summarize to pf-ai
+- Migrated explain to pf-ai
+- Migrated review to pf-ai
+- Added deterministic Bash syntax checking to review
+- Added single-turn and piped-input support
 - Severed Hugging Face runtime dependency
 - Verified fully offline inference
 
-## Current Refactor
-- Migrate explain to pf-ai
-- Improve review for limited context
-- Add safer chunked file processing
+## Current Limitations
+- Effective context remains small at 384 tokens
+- summarize and explain inspect only short file excerpts
+- review analyzes only the first 20 lines after syntax checking
+- Small models may ignore requested bullet limits or make minor wording errors
+
+## Next Refactor
+- Add chunked file processing
+- Improve project memory
+- Improve review coverage beyond the first 20 lines
 
 ## Roadmap
 - Better project memory

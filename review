@@ -1,0 +1,43 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+if [ $# -ne 1 ]; then
+    echo "Usage: review <file>" >&2
+    exit 2
+fi
+
+FILE="$1"
+
+if [ ! -f "$FILE" ]; then
+    echo "review: file not found: $FILE" >&2
+    exit 1
+fi
+
+echo "== Bash syntax check =="
+
+if bash -n "$FILE"; then
+    echo "PASS: no Bash syntax errors found."
+else
+    echo "FAIL: Bash syntax errors found."
+    exit 1
+fi
+
+echo
+echo "== AI review of first 20 lines =="
+
+{
+    cat <<'PROMPT'
+Review only the supplied excerpt of this Bash script.
+
+Return at most 4 short bullet points.
+
+Strict rules:
+- Do not make claims about code outside this excerpt.
+- Say "No issue visible in this excerpt" when evidence is insufficient.
+- Preserve exact commands, paths, and variable names.
+- Distinguish confirmed issues from optional improvements.
+- Ignore distributed computing, parallel processing, and unrelated concerns.
+
+SCRIPT EXCERPT:
+PROMPT
+    head -n 20 "$FILE"
+} | exec pf-ai smart
