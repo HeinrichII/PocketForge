@@ -91,3 +91,26 @@ Do not delete cached models or project files without explicit review and directi
 
 ## Last Updated
 2026-07-12
+2026-07-14 — Full-file processing foundation
+
+Completed
+
+- Verified "ai-smart --project" with a compact project digest.
+- Created "pf-file-chunks" for bounded full-file chunking.
+- Preserved line boundaries whenever possible.
+- Confirmed chunks reconstruct the original file exactly.
+- Tested chunking successfully on "~/bin/ai-smart".
+- Restored "pf-ai" after testing llama.cpp output options.
+- Confirmed "pf-ai smart" responds and exits normally with "RESTORE PASS".
+
+Current state
+
+- PocketForge remains fully offline.
+- "pf-ai" is stable and back on the last known-good version.
+- "pf-file-chunks" is working and ready to support full-file tools.
+- llama.cpp banners remain visible, but this is cosmetic and does not affect operation.
+
+Next task
+
+Build controlled AI-output capture outside "pf-ai", then integrate chunked full-file processing into "summarize".
+
