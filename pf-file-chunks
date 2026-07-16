@@ -1,0 +1,81 @@
+#!/data/data/com.termux/files/usr/bin/bash
+set -u
+
+if [ $# -ne 2 ]; then
+    echo "Usage: pf-file-chunks <file> <output-directory>" >&2
+    exit 2
+fi
+
+FILE="$1"
+OUTPUT_DIR="$2"
+MAX_CHARS="${PF_CHUNK_CHARS:-650}"
+
+if [ ! -f "$FILE" ]; then
+    echo "pf-file-chunks: file not found: $FILE" >&2
+    exit 1
+fi
+
+if [ ! -s "$FILE" ]; then
+    echo "pf-file-chunks: file is empty: $FILE" >&2
+    exit 1
+fi
+
+case "$MAX_CHARS" in
+    ''|*[!0-9]*)
+        echo "pf-file-chunks: PF_CHUNK_CHARS must be a positive integer" >&2
+        exit 2
+        ;;
+esac
+
+if [ "$MAX_CHARS" -lt 100 ]; then
+    echo "pf-file-chunks: PF_CHUNK_CHARS must be at least 100" >&2
+    exit 2
+fi
+
+mkdir -p "$OUTPUT_DIR" || {
+    echo "pf-file-chunks: cannot create directory: $OUTPUT_DIR" >&2
+    exit 1
+}
+
+rm -f "$OUTPUT_DIR"/chunk-*.txt
+
+awk -v output_dir="$OUTPUT_DIR" -v max_chars="$MAX_CHARS" '
+function flush_chunk(filename) {
+    if (buffer == "")
+        return
+
+    chunk_number++
+    filename = sprintf("%s/chunk-%04d.txt", output_dir, chunk_number)
+
+    printf "%s", buffer > filename
+    close(filename)
+    buffer = ""
+}
+
+{
+    line = $0 ORS
+
+    if (length(line) > max_chars) {
+        flush_chunk()
+
+        while (length(line) > max_chars) {
+            buffer = substr(line, 1, max_chars)
+            line = substr(line, max_chars + 1)
+            flush_chunk()
+        }
+
+        buffer = line
+        next
+    }
+
+    if (length(buffer) + length(line) > max_chars)
+        flush_chunk()
+
+    buffer = buffer line
+}
+
+END {
+    flush_chunk()
+    print chunk_number
+}
+' "$FILE"
